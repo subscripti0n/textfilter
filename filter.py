@@ -163,10 +163,11 @@ class DFAFilter():
 def test_first_character():
     gfw = DFAFilter()
     gfw.add("1989年")
-    assert gfw.filter("1989", "*") == "1989"
+    assert gfw.filter("1989年", "*") == "1989"
 
 
 if __name__ == "__main__":
+    #test_first_character()
     #gfw = NaiveFilter()
     #gfw = BSFilter()
     gfw = DFAFilter()
@@ -178,5 +179,7 @@ if __name__ == "__main__":
     print(gfw.filter("售假人民币 我操操操", "*"))
     print(gfw.filter("传世私服 我操操操", "*"))
     print(time.time() - t)
-
-    test_first_character()
+    if "*" in gfw.filter("传世私服 我操操操", "*"):
+        print('bad')
+        assert False
+    
