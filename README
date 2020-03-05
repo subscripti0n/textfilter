@@ -1,5 +1,4 @@
-很短但是觉得挺有用的东东
-所以单独立了个项目备份一下
+过滤敏感词
 
 USAGE:
 
@@ -7,3 +6,8 @@ USAGE:
     >>> f.add("sexy")
     >>> f.filter("hello sexy baby")
     hello **** baby
+
+    >>> gfw = DFAFilter()
+    >>> gfw.parse("keywords")
+    >>> print(gfw.filter("针孔摄像机 我操操操", "*"))
+    ***** ****
