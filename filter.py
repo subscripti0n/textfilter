@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding:utf-8 -*-
 from collections import defaultdict
 import re
@@ -24,11 +23,11 @@ class NaiveFilter():
         self.keywords = set([])
 
     def parse(self, path):
-        for keyword in open(path):
-            self.keywords.add(keyword.strip().decode('utf-8').lower())
+        for keyword in open(path, "r",encoding='utf-8').readlines():
+            self.keywords.add(keyword.strip().lower())
 
     def filter(self, message, repl="*"):
-        message = unicode(message).lower()
+        message = str(message).lower()
         for kw in self.keywords:
             message = message.replace(kw, repl)
         return message
@@ -53,7 +52,7 @@ class BSFilter:
         self.pat_en = re.compile(r'^[0-9a-zA-Z]+$')  # english phrase or not
 
     def add(self, keyword):
-        if not isinstance(keyword, unicode):
+        if not isinstance(keyword, str):
             keyword = keyword.decode('utf-8')
         keyword = keyword.lower()
         if keyword not in self.kwsets:
@@ -68,12 +67,12 @@ class BSFilter:
                         self.bsdict[char].add(index)
 
     def parse(self, path):
-        with open(path, "r") as f:
-            for keyword in f:
-                self.add(keyword.strip())
+        #with open(path, "r") as f:
+        for keyword in open(path, "r",encoding='utf-8').readlines():
+            self.add(keyword.strip())
 
     def filter(self, message, repl="*"):
-        if not isinstance(message, unicode):
+        if not isinstance(message, str):
             message = message.decode('utf-8')
         message = message.lower()
         for word in message.split():
@@ -104,7 +103,7 @@ class DFAFilter():
         self.delimit = '\x00'
 
     def add(self, keyword):
-        if not isinstance(keyword, unicode):
+        if not isinstance(keyword, str):
             keyword = keyword.decode('utf-8')
         keyword = keyword.lower()
         chars = keyword.strip()
@@ -127,12 +126,14 @@ class DFAFilter():
             level[self.delimit] = 0
 
     def parse(self, path):
-        with open(path) as f:
-            for keyword in f:
-                self.add(keyword.strip())
+        #with open(path,'r',encoding='utf-8').readlines() as f:
+        f = open(path,'r',encoding='utf-8').readlines()
+        #print(f)
+        for keyword in f:
+            self.add(keyword.strip())
 
     def filter(self, message, repl="*"):
-        if not isinstance(message, unicode):
+        if not isinstance(message, str):
             message = message.decode('utf-8')
         message = message.lower()
         ret = []
@@ -166,16 +167,16 @@ def test_first_character():
 
 
 if __name__ == "__main__":
-    # gfw = NaiveFilter()
-    # gfw = BSFilter()
+    #gfw = NaiveFilter()
+    #gfw = BSFilter()
     gfw = DFAFilter()
     gfw.parse("keywords")
     import time
     t = time.time()
-    print gfw.filter("法轮功 我操操操", "*")
-    print gfw.filter("针孔摄像机 我操操操", "*")
-    print gfw.filter("售假人民币 我操操操", "*")
-    print gfw.filter("传世私服 我操操操", "*")
-    print time.time() - t
+    print(gfw.filter("法轮功 我操操操", "*"))
+    print(gfw.filter("针孔摄像机 我操操操", "*"))
+    print(gfw.filter("售假人民币 我操操操", "*"))
+    print(gfw.filter("传世私服 我操操操", "*"))
+    print(time.time() - t)
 
     test_first_character()
